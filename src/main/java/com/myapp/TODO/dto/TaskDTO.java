@@ -20,4 +20,5 @@ public class TaskDTO {
     private Date createdAt;
     private Date updatedAt;
     private UUID userId;
+    private UserDTO user;
 }

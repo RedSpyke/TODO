@@ -1,6 +1,8 @@
 package com.myapp.TODO.controller;
 
+import com.myapp.TODO.dto.UserCreationDTO;
 import com.myapp.TODO.dto.UserDTO;
+import com.myapp.TODO.service.UserMapper;
 import com.myapp.TODO.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +15,11 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserService userService, UserMapper userMapper){
+    this.userService = userService;
+    this.userMapper = userMapper;
     }
 
     @GetMapping
@@ -31,8 +35,9 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDTO createUser(@RequestBody UserDTO userDTO) {
-        return userService.saveUser(userDTO);
+    public UserDTO createUser(@RequestBody UserCreationDTO userCreationDTO) {
+        System.out.println("userCreationDTO: " + userCreationDTO);
+        return userService.createUser(userCreationDTO);
     }
 
     @PutMapping("/{id}")
@@ -40,7 +45,8 @@ public class UserController {
         return userService.getUserById(id)
                 .map(existingUser -> {
                     userDTO.setId(id);
-                    return ResponseEntity.ok(userService.saveUser(userDTO));
+                    UserCreationDTO userCreationDTO = userMapper.toCreationDTO(userDTO);
+                    return ResponseEntity.ok(userService.saveUser(id, userCreationDTO));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
