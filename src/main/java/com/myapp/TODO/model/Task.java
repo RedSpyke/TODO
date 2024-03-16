@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "tasks")
+@Table(name = "TASKS")
 public class Task {
 
     public enum Priority {
