@@ -1,5 +1,6 @@
 package com.myapp.TODO.service;
 
+import com.myapp.TODO.dto.TaskDTO;
 import com.myapp.TODO.model.Task;
 import com.myapp.TODO.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,27 +9,34 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final TaskMapper taskMapper;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, TaskMapper taskMapper) {
         this.taskRepository = taskRepository;
+        this.taskMapper = taskMapper;
     }
 
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    public List<TaskDTO> getAllTasks() {
+        List<Task> tasks = taskRepository.findAll();
+        return tasks.stream().map(taskMapper::toDTO).collect(Collectors.toList());
     }
 
-    public Optional<Task> getTaskById(UUID id) {
-        return taskRepository.findById(id);
+    public Optional<TaskDTO> getTaskById(UUID id) {
+        Optional<Task> task = taskRepository.findById(id);
+        return task.map(taskMapper::toDTO);
     }
 
-    public Task saveTask(Task task) {
-        return taskRepository.save(task);
+    public TaskDTO saveTask(TaskDTO taskDTO) {
+        Task task = taskMapper.toEntity(taskDTO);
+        Task savedTask = taskRepository.save(task);
+        return taskMapper.toDTO(savedTask);
     }
 
     public void deleteTask(UUID id) {
