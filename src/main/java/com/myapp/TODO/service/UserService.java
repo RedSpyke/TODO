@@ -9,7 +9,6 @@ import com.myapp.TODO.model.Task;
 import com.myapp.TODO.model.User;
 import com.myapp.TODO.repository.UserRepository;
 import com.myapp.TODO.validation.PasswordValidation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,23 +40,23 @@ public class UserService {
 
     public UserDTO getUserById(UUID id) {
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return userMapper.toDTO(user);
     }
 
-   public UserDTO createUser(UserCreationDTO userCreationDTO) {
-    User user = userMapper.toEntity(userCreationDTO);
-    if(!passwordValidation.validatePassword(userCreationDTO.getPassword())){
-        throw new InvalidPasswordException("Password does not meet the requirements");
-    }
-    user.setHashPassword(encodePassword(userCreationDTO.getPassword()));
-    User savedUser = userRepository.save(user);
-    return userMapper.toDTO(savedUser);
+    public UserDTO createUser(UserCreationDTO userCreationDTO) {
+        User user = userMapper.toEntity(userCreationDTO);
+        if(!passwordValidation.validatePassword(userCreationDTO.getPassword())){
+            throw new InvalidPasswordException("Password does not meet the requirements");
+        }
+        user.setHashPassword(encodePassword(userCreationDTO.getPassword()));
+        User savedUser = userRepository.save(user);
+        return userMapper.toDTO(savedUser);
     }
 
-        public UserDTO saveUser(UUID id, UserDTO userDTO) {
+    public UserDTO saveUser(UUID id, UserDTO userDTO) {
         User existingUser = userRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         existingUser.setFirstName(userDTO.getFirstName());
         existingUser.setLastName(userDTO.getLastName());
         existingUser.setBirthday(userDTO.getBirthday());
@@ -74,31 +73,30 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public UserDTO changePassword(UUID id, String oldPassword, String newPassword) {
-    User user = userRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException("User not found"));
+    public boolean changePassword(UUID id, String oldPassword, String newPassword) {
 
-    if (!passwordEncoder.matches(oldPassword, user.getHashPassword())) {
-        throw new IllegalArgumentException("Old password is incorrect");
-    }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        if (!passwordEncoder.matches(oldPassword, user.getHashPassword())) {
+            throw new IllegalArgumentException("Old password is incorrect");
+        }
 
-    if(!passwordValidation.validatePassword(newPassword)){
-        throw new InvalidPasswordException("New password does not meet the requirements");
-    }
+        if(!passwordValidation.validatePassword(newPassword)){
+            throw new InvalidPasswordException("New password does not meet the requirements");
+        }
 
-    user.setHashPassword(passwordEncoder.encode(newPassword));
-    User updatedUser = userRepository.save(user);
+        user.setHashPassword(passwordEncoder.encode(newPassword));
 
-    return userMapper.toDTO(updatedUser);
+        return true;
     }
 
     public Set<TaskDTO> getAllTasks(UUID userId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         Set<Task> tasks = user.getTasks();
         return tasks.stream()
-            .map(taskMapper::toDTO)
-            .collect(Collectors.toSet());
+                .map(taskMapper::toDTO)
+                .collect(Collectors.toSet());
     }
 
     private String encodePassword(String password) {

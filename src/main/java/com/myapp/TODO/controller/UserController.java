@@ -1,16 +1,21 @@
 package com.myapp.TODO.controller;
 
+import com.myapp.TODO.dto.PasswordChangeRequest;
 import com.myapp.TODO.dto.TaskDTO;
 import com.myapp.TODO.dto.UserCreationDTO;
 import com.myapp.TODO.dto.UserDTO;
-import com.myapp.TODO.service.UserMapper;
+import com.myapp.TODO.exception.InvalidPasswordException;
+import com.myapp.TODO.exception.PasswordChangeFailedException;
 import com.myapp.TODO.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+
 
 @RestController
 @RequestMapping("api/users")
@@ -19,7 +24,7 @@ public class UserController {
     private final UserService userService;
 
     public UserController(UserService userService){
-    this.userService = userService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -37,16 +42,30 @@ public class UserController {
         }
     }
 
+
+
     @PostMapping
-    public UserDTO createUser(@RequestBody UserCreationDTO userCreationDTO) {
-        System.out.println("userCreationDTO: " + userCreationDTO);
-        return userService.createUser(userCreationDTO);
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserCreationDTO userCreationDTO, BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError error : result.getFieldErrors()) {
+                errorMap.put(error.getField(), error.getDefaultMessage());
+            }
+            return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            UserDTO userDTO = userService.createUser(userCreationDTO);
+            return ResponseEntity.ok(userDTO);
+        } catch (InvalidPasswordException e) {
+            return ResponseEntity.badRequest().body("Invalid password provided.");
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable UUID id, @RequestBody UserDTO userDTO) {
-    UserDTO updatedUserDTO = userService.saveUser(id, userDTO);
-    return ResponseEntity.ok(updatedUserDTO);
+        UserDTO updatedUserDTO = userService.saveUser(id, userDTO);
+        return ResponseEntity.ok(updatedUserDTO);
     }
 
     @DeleteMapping("/{id}")
@@ -59,5 +78,15 @@ public class UserController {
     @GetMapping("/{id}/tasks")
     public Set<TaskDTO> getAllTasks(@PathVariable UUID id) {
         return userService.getAllTasks(id);
+    }
+
+    // change password
+    @PutMapping("/{id}/changePassword")
+    public ResponseEntity<Void> changePassword(@PathVariable UUID id, @RequestBody PasswordChangeRequest passwordChangeRequest){
+        boolean isPasswordChanged = userService.changePassword(id, passwordChangeRequest.getOldPassword(), passwordChangeRequest.getNewPassword());
+        if (!isPasswordChanged) {
+            throw new PasswordChangeFailedException("Password change failed");
+        }
+        return ResponseEntity.noContent().build(); // 204 No Content
     }
 }

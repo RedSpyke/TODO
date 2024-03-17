@@ -1,0 +1,330 @@
+{
+	"info": {
+		"_postman_id": "714adccf-0fb6-49d1-9348-1996ea3da8fa",
+		"name": "TODOapp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31227623"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Alexandru\",\r\n    \"lastName\": \"Popescu\",\r\n    \"birthday\": \"1990-12-01\",\r\n    \"email\": \"alexandru.popescu@email.com\",\r\n    \"password\": \"Password123!\",\r\n    \"role\": \"USER\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Vlad\",\r\n    \"lastName\": \"Stoicescu\",\r\n    \"birthday\": \"1980-01-01\",\r\n    \"email\": \"vlad.stoicescu@example.com\",\r\n    \"password\": \"password123\",\r\n    \"role\": \"ROLE_USER\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/api/users/522d1082-0177-4427-ae05-2a07db34a6b8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"api",
+								"users",
+								"522d1082-0177-4427-ae05-2a07db34a6b8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8085/api/users/77750097-d014-452b-8b4f-727b935947a9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"api",
+								"users",
+								"77750097-d014-452b-8b4f-727b935947a9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8085/api/users/522d1082-0177-4427-ae05-2a07db34a6b8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"api",
+								"users",
+								"522d1082-0177-4427-ae05-2a07db34a6b8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8085/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All tasks of a User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8085/api/users/95cac2d7-46f0-4c1b-a2c5-f55ae585ef4c/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"api",
+								"users",
+								"95cac2d7-46f0-4c1b-a2c5-f55ae585ef4c",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"oldPassword\": \"Password123!\", \r\n    \"newPassword\": \"Password321!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/api/users/07fc3e77-fce0-4782-9043-9ee417bca8f5/changePassword",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"api",
+								"users",
+								"07fc3e77-fce0-4782-9043-9ee417bca8f5",
+								"changePassword"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Task",
+			"item": [
+				{
+					"name": "Create Task",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"TestTask\",\r\n    \"description\": \"This is a test\",\r\n    \"dueDate\": \"2023-12-31T23:59:59.000+00:00\",\r\n    \"completed\": false,\r\n    \"priority\": \"HIGH\",\r\n    \"status\": \"IN_PROGRESS\",\r\n    \"createdAt\": \"2023-01-01T00:00:00.000+00:00\",\r\n    \"updatedAt\": \"2023-01-01T00:00:00.000+00:00\",\r\n    \"userId\": \"95cac2d7-46f0-4c1b-a2c5-f55ae585ef4c\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/api/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Task",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My New Task\",\r\n    \"description\": \"This is a new task\",\r\n    \"dueDate\": \"2023-12-31T23:59:59.000+00:00\",\r\n    \"completed\": false,\r\n    \"priority\": \"MEDIUM\",\r\n    \"status\": \"IN_PROGRESS\",\r\n    \"createdAt\": \"2023-01-01T00:00:00.000+00:00\",\r\n    \"updatedAt\": \"2023-01-01T00:00:00.000+00:00\",\r\n    \"userId\": \"522d1082-0177-4427-ae05-2a07db34a6b8\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/api/tasks/06acdee6-eece-47f6-b7b4-976611df93d3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"api",
+								"tasks",
+								"06acdee6-eece-47f6-b7b4-976611df93d3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete task",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8085/api/tasks/06acdee6-eece-47f6-b7b4-976611df93d3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"api",
+								"tasks",
+								"06acdee6-eece-47f6-b7b4-976611df93d3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get task",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8085/api/tasks/71098dc1-5a93-4cea-a6e2-4237722db529",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"api",
+								"tasks",
+								"71098dc1-5a93-4cea-a6e2-4237722db529"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All tasks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8085/api/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
