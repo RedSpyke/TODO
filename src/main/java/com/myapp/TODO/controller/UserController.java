@@ -17,11 +17,9 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
 
-    public UserController(UserService userService, UserMapper userMapper){
+    public UserController(UserService userService){
     this.userService = userService;
-    this.userMapper = userMapper;
     }
 
     @GetMapping
@@ -31,9 +29,12 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable UUID id) {
-        return userService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        UserDTO userDTO = userService.getUserById(id);
+        if(userDTO != null) {
+            return ResponseEntity.ok(userDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
@@ -44,23 +45,14 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable UUID id, @RequestBody UserDTO userDTO) {
-        return userService.getUserById(id)
-                .map(existingUser -> {
-                    userDTO.setId(id);
-                    UserCreationDTO userCreationDTO = userMapper.toCreationDTO(userDTO);
-                    return ResponseEntity.ok(userService.saveUser(id, userCreationDTO));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    UserDTO updatedUserDTO = userService.saveUser(id, userDTO);
+    return ResponseEntity.ok(updatedUserDTO);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
-        return userService.getUserById(id)
-                .map(user -> {
-                    userService.deleteUser(id);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
     // get all tasks of a user

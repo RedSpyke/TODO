@@ -5,7 +5,6 @@ import com.myapp.TODO.model.Task;
 import com.myapp.TODO.model.User;
 import com.myapp.TODO.repository.TaskRepository;
 import com.myapp.TODO.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +19,6 @@ public class TaskService {
     private final TaskMapper taskMapper;
     private final UserRepository userRepository;
 
-    @Autowired
     public TaskService(TaskRepository taskRepository, TaskMapper taskMapper, UserRepository userRepository) {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
