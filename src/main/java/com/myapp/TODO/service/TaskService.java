@@ -2,7 +2,9 @@ package com.myapp.TODO.service;
 
 import com.myapp.TODO.dto.TaskDTO;
 import com.myapp.TODO.model.Task;
+import com.myapp.TODO.model.User;
 import com.myapp.TODO.repository.TaskRepository;
+import com.myapp.TODO.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +18,13 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
+    private final UserRepository userRepository;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository, TaskMapper taskMapper) {
+    public TaskService(TaskRepository taskRepository, TaskMapper taskMapper, UserRepository userRepository) {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
+        this.userRepository = userRepository;
     }
 
     public List<TaskDTO> getAllTasks() {
@@ -33,10 +37,18 @@ public class TaskService {
         return task.map(taskMapper::toDTO);
     }
 
-    public TaskDTO saveTask(TaskDTO taskDTO) {
-        Task task = taskMapper.toEntity(taskDTO);
-        Task savedTask = taskRepository.save(task);
-        return taskMapper.toDTO(savedTask);
+   public TaskDTO saveTask(TaskDTO taskDTO) {
+    User user = userRepository.findById(taskDTO.getUserId())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    Task task = taskMapper.toEntity(taskDTO);
+    task.setUser(user);
+
+    user.getTasks().add(task);
+    userRepository.save(user);
+
+    Task savedTask = taskRepository.save(task);
+    return taskMapper.toDTO(savedTask);
     }
 
     public void deleteTask(UUID id) {

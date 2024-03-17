@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 @Data
@@ -13,11 +14,11 @@ import java.util.UUID;
 public class Task {
 
     public enum Priority {
-        LOW, MEDIUM, HIGH
+        LOW, MEDIUM, HIGH // validation for priority change
     }
 
     public enum Status {
-        TO_DO, IN_PROGRESS, DONE
+        TO_DO, IN_PROGRESS, DONE // validation for status change
     }
 
     @Id
@@ -59,4 +60,24 @@ public class Task {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Override
+    public int hashCode() {
+    return Objects.hash(id, title, description, dueDate, completed, priority, status, createdAt, updatedAt);
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", dueDate=" + dueDate +
+                ", completed=" + completed +
+                ", priority=" + priority +
+                ", status=" + status +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

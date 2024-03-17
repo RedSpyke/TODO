@@ -1,5 +1,6 @@
 package com.myapp.TODO.controller;
 
+import com.myapp.TODO.dto.TaskDTO;
 import com.myapp.TODO.dto.UserCreationDTO;
 import com.myapp.TODO.dto.UserDTO;
 import com.myapp.TODO.service.UserMapper;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -59,5 +61,11 @@ public class UserController {
                     return ResponseEntity.ok().<Void>build();
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // get all tasks of a user
+    @GetMapping("/{id}/tasks")
+    public Set<TaskDTO> getAllTasks(@PathVariable UUID id) {
+        return userService.getAllTasks(id);
     }
 }

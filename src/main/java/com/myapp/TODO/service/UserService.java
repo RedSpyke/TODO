@@ -1,7 +1,9 @@
 package com.myapp.TODO.service;
 
+import com.myapp.TODO.dto.TaskDTO;
 import com.myapp.TODO.dto.UserCreationDTO;
 import com.myapp.TODO.dto.UserDTO;
+import com.myapp.TODO.model.Task;
 import com.myapp.TODO.model.User;
 import com.myapp.TODO.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -19,12 +22,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final BCryptPasswordEncoder passwordEncoder;
-
+    private final TaskMapper taskMapper;
     @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, BCryptPasswordEncoder passwordEncoder, TaskMapper taskMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.taskMapper = taskMapper;
     }
 
     public List<UserDTO> getAllUsers() {
@@ -58,4 +62,17 @@ public class UserService {
     public void deleteUser(UUID id) {
         userRepository.deleteById(id);
     }
+
+    // TODO change password method
+
+    // get all tasks of a user
+    public Set<TaskDTO> getAllTasks(UUID userId) {
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+    Set<Task> tasks = user.getTasks();
+    return tasks.stream()
+            .map(taskMapper::toDTO)
+            .collect(Collectors.toSet());
+    }
+
 }
